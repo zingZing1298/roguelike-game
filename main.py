@@ -1,32 +1,37 @@
 import tcod
+from entity import Entity
 from input_handlers import EventHandler
 from actions import EscapeAction, MovementAction
 
 def main():
     # print("Hello World!")
-    screen_widht = 80
+    screen_width = 80
     screen_height = 50
 
     tileset = tcod.tileset.load_tilesheet('./data/asset.png', 32,8,tcod.tileset.CHARMAP_TCOD)
 
     event_handler = EventHandler()
-    player_start_x = screen_widht//2
-    player_start_y =screen_height//2
+    #Add base entites
+    player = Entity(int(screen_width/2), int(screen_height/2), '@', (255,255,255))
+    npc = Entity(int(screen_width/2-5), int(screen_height/2), '@', (255,255,0))
+    entites = {npc,player}
 
     with tcod.context.new_terminal(
-        screen_widht, 
+        screen_width, 
         screen_height,
         tileset= tileset,
         title = "RogueLike",
         vsync = True,
 
         ) as context:
-            root_console = tcod.console.Console(screen_widht, screen_height, order = "F")
+            root_console = tcod.console.Console(screen_width, screen_height, order = "F")
 
 
             #Main game loop
             while True:
-                root_console.print(x=player_start_x,y=player_start_y, string = "@")
+                root_console.print(x=player.x,y=player.y, string = player.char, fg = player.color)
+                # sroot_console.print(x=player.x,y=player.y, string = player.char, fg = player.color)
+                
                 context.present(root_console)
                 #Clear previous frame 
                 root_console.clear()
@@ -38,9 +43,7 @@ def main():
                     if action is None:
                         continue
                     if isinstance(action, MovementAction):
-                        player_start_x += action.dx
-                        player_start_y += action.dy
-
+                        player.move(dx = action.dx, dy = action.dy)
                     elif isinstance(action, EscapeAction):
                         raise SystemExit()                    
 
