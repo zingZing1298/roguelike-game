@@ -46,7 +46,7 @@ def main():
                         player.move(dx = action.dx, dy = action.dy)
                     elif isinstance(action, EscapeAction):
                         raise SystemExit()                    
-
+ 
 
 
 if __name__ == "__main__":
